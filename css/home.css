@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lora', serif;
+}
+
+html {
+    color: white;
+    font-family: 'Lora', serif;
+}
+
+header {
+    background-color: #0d2b33;
+    height: 8vh;
+    display: flex;
+    width: 100%;
+    position: fixed;
+    align-items: center;
+}
+
+#logo {
+    margin: 5vh 1vh 0 1vh;
+    height: 12vh;
+
+}
+
+.secciones {
+    font-size: 1.8vh;
+    color: #fdf7ec;
+    text-align: right;
+    text-decoration:none;
+    font-weight: 500;
+    margin: 0 1.5vh;
+    transition: all 0.3s;
+}
+
+.secciones:hover {
+    font-size: 2vh;
+}
+
+#restaurante {
+    width: 80%;
+    height: 90%;
+    background-color: grey;
+}
+
+#historial {
+    width: 20%;
+    height: 100%;
+    background-color: #9ab2b8;
+}
