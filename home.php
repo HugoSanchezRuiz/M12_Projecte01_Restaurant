@@ -11,8 +11,8 @@
 <nav class="navbar navbar-expand-lg navbar-light ">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item active">
         <a class="nav-link" href="#">Home</a>
@@ -49,15 +49,15 @@ include_once("./conexion.php");
 ?>
 <!-- mostramos las mesas que hay en la terraza -->
 <div class='terraza'>
-        <form method="post" action="mostrarMesas.php">
+        <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_1' value="terraza_1">
         </form>
 
-        <form method="post" action="mostrarMesas.php">
+        <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_2' value="terraza_2">
         </form>
 
-        <form method="post" action="mostrarMesas.php">
+        <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_3' value="terraza_3">
         </form>
 </div>
@@ -67,10 +67,10 @@ include_once("./conexion.php");
 <br>
 <!-- mostramos las mesas que hay en el comedor -->
 <div class='comedor'>
-        <form method="post" action="mostrarMesas.php">
+        <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='comedor_1' value="comedor_1">
         </form>
-        <form method="post" action="mostrarMesas.php">
+        <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='comedor_2' value="comedor_2">
         </form>
 </div>
@@ -81,16 +81,16 @@ include_once("./conexion.php");
 
 <!-- mostramos las mesas que hay en la sala privada -->
 <div class='sala-privada'>
-    <form method="post" action="mostrarMesas.php">
+    <form method="post" action="mostrar_mesas.php">
         <input type='submit' name='sala_1' value="sala_1">
     </form>
-    <form method="post" action="mostrarMesas.php">
+    <form method="post" action="mostrar_mesas.php">
         <input type='submit' name='sala_2' value="sala_2">
     </form>
-    <form method="post" action="mostrarMesas.php">
+    <form method="post" action="mostrar_mesas.php">
         <input type='submit' name='sala_3' value="sala_3">
     </form>
-    <form method="post" action="mostrarMesas.php">
+    <form method="post" action="mostrar_mesas.php">
         <input type='submit' name='sala_4' value="sala_4">
     </form>
 </div>
