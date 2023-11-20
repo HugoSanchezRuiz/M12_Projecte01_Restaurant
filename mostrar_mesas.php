@@ -9,19 +9,19 @@ function mostrarMesas($nombreSala, $conn) {
         mysqli_begin_transaction($conn);
 
         // Consulta SQL para mostrar las mesas de la terraza con información de ocupación
-        $sqlTerraza = "SELECT m.*, s.nombre as nombre_sala, o.fecha_inicio, o.fecha_fin
+        $sqlSala = "SELECT m.*, s.nombre as nombre_sala, o.fecha_inicio, o.fecha_fin
             FROM tbl_mesa m
             JOIN tbl_sala s ON m.id_sala = s.id_sala
             LEFT JOIN tbl_ocupacion o ON m.id_mesa = o.id_mesa
             WHERE s.nombre='$nombreSala'";
 
         // Ejecutar la consulta
-        $resultTerraza = mysqli_query($conn, $sqlTerraza);
+        $resultSala = mysqli_query($conn, $sqlSala);
 
-        if ($resultTerraza) {
+        if ($resultSala) {
             echo "<h2>Mesas de $nombreSala</h2>";
             echo "<form method='post' action='cambiar_estado_mesa.php'>";
-            while ($row = mysqli_fetch_assoc($resultTerraza)) {
+            while ($row = mysqli_fetch_assoc($resultSala)) {
                 echo "<button type='submit' name='mesa_id' value='" . $row['id_mesa'] . "' ";
                 
                 if ($row['ocupada']) {
