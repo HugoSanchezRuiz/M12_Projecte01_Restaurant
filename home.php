@@ -1,3 +1,50 @@
+<?php
+session_start();
+include_once("./conexion.php");
+
+// Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
+function mostrarCamarerosOrdenadosPorMesas($conn) {
+  try {
+      mysqli_autocommit($conn, false);
+      mysqli_begin_transaction($conn);
+
+      // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
+      $sqlCamareros = "SELECT c.nombre as nombre_camarero, COUNT(o.id_mesa) as num_mesas_ocupadas
+          FROM tbl_camarero c
+          LEFT JOIN tbl_ocupacion o ON c.id_camarero = o.id_camarero
+          GROUP BY c.id_camarero
+          ORDER BY num_mesas_ocupadas DESC";
+
+      // Ejecutar la consulta
+      $resultCamareros = mysqli_query($conn, $sqlCamareros);
+
+      if ($resultCamareros) {
+          echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
+          while ($row = mysqli_fetch_assoc($resultCamareros)) {
+              echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
+          }
+      } else {
+          echo "Error en la consulta de camareros: " . mysqli_error($conn);
+      }
+
+      // Confirmar la transacción
+      mysqli_commit($conn);
+
+      // Cerrar la conexión a la base de datos
+      mysqli_close($conn);
+  } catch (Exception $e) {
+      // Deshacemos la actualización en caso de que se genere alguna excepción
+      mysqli_rollback($conn);
+      echo "Error: " . $e->getMessage();
+  }
+}
+
+// Luego, puedes llamar a esta función según sea necesario.
+mostrarCamarerosOrdenadosPorMesas($conn);
+
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,7 +82,7 @@
 
 <?php
 // inicia la sesion
-session_start();
+//session_start();
 
 // Comprobar si el usuario ha iniciado sesión
 // if (!isset($_SESSION['id_camarero'])) {
