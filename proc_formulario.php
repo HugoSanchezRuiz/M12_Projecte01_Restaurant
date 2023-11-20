@@ -1,0 +1,49 @@
+<?php
+// Creamos la variable de errores que está vacía 
+$errores = "";
+
+// Verificar si el campo 'usuario' está presente en $_POST
+if (isset($_POST['usuario'])) {
+    // Recogemos los datos que ha introducido el usuario
+    $usuario = $_POST['usuario'];
+    echo $usuario;
+    // Incluir el archivo de funciones
+    require_once('./funciones.php');
+    // Incluir el archivo de conexión a la base de datos
+    include_once("./conexion.php");
+
+    // Consulta para verificar si el usuario ya existe
+    $sql_check = "SELECT COUNT(*) FROM tbl_camarero WHERE nombre = ?";
+    $stmt_check = mysqli_stmt_init($conn);
+
+    mysqli_stmt_prepare($stmt_check, $sql_check);
+    mysqli_stmt_bind_param($stmt_check, "s", $usuario);
+    mysqli_stmt_execute($stmt_check);
+    mysqli_stmt_bind_result($stmt_check, $user_count);
+    mysqli_stmt_fetch($stmt_check);
+    mysqli_stmt_close($stmt_check);
+
+    if ($user_count > 0) {
+        // El usuario ya existe, agrega un mensaje de error a la variable $errores
+        if ($errores) {
+            $errores .= '&nombreExist=true';
+        } else {
+            $errores = '?nombreExist=true';
+        }
+    }
+
+    // Si hay errores
+    if ($errores != "") {
+        $datosRecibidos = array(
+            'usuario' => $usuario
+        );
+        $datosDevueltos = http_build_query($datosRecibidos);
+        header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
+        exit();
+    }
+} else {
+    // Si 'usuario' no está presente en $_POST, manejar el caso según tus necesidades
+    // Por ejemplo, redirigir o mostrar un mensaje de error
+    echo "Error: El campo 'usuario' no está presente en el formulario.";
+}
+?>
