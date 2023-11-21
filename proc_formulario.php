@@ -1,7 +1,7 @@
 <?php
 // Creamos la variable de errores que está vacía 
 $errores = "";
-
+session_start();
 // Verificar si el campo 'usuario' está presente en $_POST
 if (isset($_POST['usuario'])) {
     // Recogemos los datos que ha introducido el usuario
@@ -13,17 +13,18 @@ if (isset($_POST['usuario'])) {
     include_once("./conexion.php");
 
     // Verificar si el usuario ya existe en la base de datos
-    $sql_check = "SELECT COUNT(*) FROM tbl_camarero WHERE nombre = ?";
+    $sql_check = "SELECT nombre, contra FROM tbl_camarero WHERE nombre = ?";
     $stmt_check = mysqli_stmt_init($conn);
 
     mysqli_stmt_prepare($stmt_check, $sql_check);
     mysqli_stmt_bind_param($stmt_check, "s", $usuario);
     mysqli_stmt_execute($stmt_check);
-    mysqli_stmt_bind_result($stmt_check, $user_count);
-    mysqli_stmt_fetch($stmt_check);
-    mysqli_stmt_close($stmt_check);
 
-    if ($user_count === 0) {
+    // Guardamos el resultado
+    mysqli_stmt_store_result($stmt_check);
+
+    // Verificamos si se encontró algún resultado
+    if (mysqli_stmt_num_rows($stmt_check) === 0) {
         // El usuario no existe, agregar un mensaje de error a la variable $errores
         if ($errores) {
             $errores .= '&nombreNotExist=true';
@@ -33,6 +34,7 @@ if (isset($_POST['usuario'])) {
     } else {
         // El usuario existe, ahora verificamos la contraseña
         $pwd = $_POST['pwd']; // Asegúrate de que estás recogiendo la contraseña del formulario
+        $pwdEncriptada = hash("sha256", $pwd);
 
         // Consulta para obtener la contraseña almacenada en la base de datos
         $sql_password = "SELECT contra FROM tbl_camarero WHERE nombre = ?";
@@ -46,7 +48,7 @@ if (isset($_POST['usuario'])) {
         mysqli_stmt_close($stmt_password);
 
         // Verificar si la contraseña ingresada coincide con la almacenada en la base de datos
-        if (!password_verify($password, $stored_password)) {
+        if (hash_equals($pwdEncriptada, $stored_password)) {
             // La contraseña no coincide, agregar un mensaje de error a la variable $errores
             if ($errores) {
                 $errores .= '&passwdIncorrect=true';
@@ -57,16 +59,17 @@ if (isset($_POST['usuario'])) {
     }
 
     // Si hay errores
-if ($errores != "") {
-    $datosRecibidos = array(
-        'usuario' => $usuario,
-        'pwd' => $pwd 
-    );
-    $datosDevueltos = http_build_query($datosRecibidos);
-    header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
-    exit();
-}
-
+    if ($errores != "") {
+        $datosRecibidos = array(
+            'usuario' => $usuario,
+            'pwd' => $pwdEncriptada
+        );
+        $datosDevueltos = http_build_query($datosRecibidos);
+        header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
+        exit();
+    } else {
+        header("Location: ./home.php");
+    }
 } else {
     // Si 'usuario' no está presente en $_POST, manejar el caso según tus necesidades
     // Por ejemplo, redirigir o mostrar un mensaje de error
