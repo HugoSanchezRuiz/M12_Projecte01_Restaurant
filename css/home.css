@@ -6,29 +6,26 @@
 
 html {
     color: white;
-    font-family: 'Lora', serif;
 }
 
 header {
     background-color: #0d2b33;
-    height: 8vh;
+    height: 10vh;
     display: flex;
     width: 100%;
-    position: fixed;
     align-items: center;
 }
 
 #logo {
-    margin: 5vh 1vh 0 1vh;
-    height: 12vh;
-
+    margin: 0.5vh 1vh 0 2.5vh;
+    height: 8vh;
 }
 
 .secciones {
     font-size: 1.8vh;
     color: #fdf7ec;
     text-align: right;
-    text-decoration:none;
+    text-decoration: none;
     font-weight: 500;
     margin: 0 1.5vh;
     transition: all 0.3s;
@@ -38,14 +35,124 @@ header {
     font-size: 2vh;
 }
 
+#conjunto {
+    margin-top: 10vh;
+}
+
 #restaurante {
     width: 80%;
-    height: 90%;
-    background-color: grey;
+    height: 90vh;
+    background-color: #fdf7ec;
 }
 
 #historial {
     width: 20%;
+    height: 90vh;
+    background-color: grey;
+}
+
+.salas {
+    text-align: right;
+}
+
+.img-mesas{
+    object-fit: contain;
+    width: 100%;
     height: 100%;
-    background-color: #9ab2b8;
+	margin: auto;
+}
+
+/* TERRAZAS */
+
+.terraza-mesa {
+    height: 45vh;
+}
+
+/* COMEDORES */
+
+.comedor-1-2-mesa {
+    height: 30vh;
+}
+
+.comedor-3-mesa {
+    height: 30vh;
+}
+
+/* SALAS PRIVADAS */
+
+.salaprivada-1-mesa {
+    height: 45vh;
+}
+
+.salaprivada-2-3-mesa {
+    height: 45vh;
+}
+
+.salaprivada-4-mesa {
+    height: 45vh;
+}
+
+/* ESPECIALES */
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.column-1 {
+    width: 100%;
+    float: left;
+}
+
+.column-2 {
+    width: 50%;
+    float: left;
+}
+
+.column-3 {
+    width: 33.33%;
+    float: left;
+}
+
+.column-4 {
+    width: 25%;
+    float: left;
+}
+
+.column-5 {
+    width: 20%;
+    float: left;
+}
+
+.column-6 {
+    width: 16.66%;
+    float: left;
+}
+
+.column-75 {
+    width: 75%;
+    float: left;
+}
+
+/* RESPONSIVE */
+
+@media only screen and (max-width: 600px) {
+    .column-2 {
+        width: 50%;
+    }
+
+    .column-3 {
+        width: 50%;
+    }
+
+    .column-4 {
+        width: 50%;
+    }
 }
