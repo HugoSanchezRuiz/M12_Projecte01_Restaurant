@@ -3,35 +3,56 @@ session_start();
 include_once("./conexion.php");
 
 //Comprobar si el usuario ha iniciado sesión
-if (!isset($_SESSION['id_camarero'])) {
-    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
-    exit();
-}
+// if (!isset($_SESSION['id_camarero'])) {
+//     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+//     exit();
+// }
 
 // Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
 function mostrarCamarerosOrdenadosPorMesas($conn) {
-  try {
-      // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
-      $sqlCamareros = "SELECT c.nombre as nombre_camarero, COUNT(o.id_mesa) as num_mesas_ocupadas
-          FROM tbl_camarero c
-          LEFT JOIN tbl_ocupacion o ON c.id_camarero = o.id_camarero
-          GROUP BY c.id_camarero
-          ORDER BY num_mesas_ocupadas DESC";
+    try {
+        // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
+        $sqlCamareros = "SELECT c.nombre as nombre_camarero, COUNT(o.id_mesa) as num_mesas_ocupadas,
+            GROUP_CONCAT(o.id_mesa ORDER BY o.id_mesa) as mesas_ocupadas_ids,
+            GROUP_CONCAT(o.num_veces_ocupada ORDER BY o.id_mesa) as veces_ocupada
+            FROM tbl_camarero c
+            LEFT JOIN (
+                SELECT id_camarero, id_mesa, COUNT(*) as num_veces_ocupada
+                FROM tbl_ocupacion
+                GROUP BY id_camarero, id_mesa
+            ) o ON c.id_camarero = o.id_camarero
+            GROUP BY c.id_camarero
+            ORDER BY num_mesas_ocupadas DESC";
 
-      $resultCamareros = mysqli_query($conn, $sqlCamareros);
+        $stmtCamareros = mysqli_prepare($conn, $sqlCamareros);
+        mysqli_stmt_execute($stmtCamareros);
+        $resultCamareros = mysqli_stmt_get_result($stmtCamareros);
 
-      if ($resultCamareros) {
-          echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
-          while ($row = mysqli_fetch_assoc($resultCamareros)) {
-              echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
-          }
-      } else {
-          throw new Exception("Error en la consulta de camareros: " . mysqli_error($conn));
-      }
+        if (!$resultCamareros) {
+            die("Error en la consulta: " . mysqli_error($conn));
+        }
 
-  } catch (Exception $e) {
-      echo "Error: " . $e->getMessage();
-  }
+        if ($resultCamareros->num_rows > 0) {
+            echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
+            echo "<br>";
+            while ($row = mysqli_fetch_assoc($resultCamareros)) {
+                echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
+                echo "<br>";
+                echo "<p>Mesas Ocupadas:</p>";
+                echo "<br>";
+                $mesasIds = explode(",", $row['mesas_ocupadas_ids']);
+                $vecesOcupada = explode(",", $row['veces_ocupada']);
+
+                for ($i = 0; $i < count($mesasIds); $i++) {
+                    echo "Mesa ID: " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i] . "<br>";
+                }
+            }
+        } else {
+            echo "<p>No hay resultados.</p>";
+        }
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 }
 
 // Luego, puedes llamar a esta función según sea necesario.
@@ -75,6 +96,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
   
   filtrarMesasPorCapacidad($conn, $capacidadFiltro);
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['fechaFiltro'])) {
+    $fechaFiltro = $_POST['fechaFiltro'];
+    
+    filtrarMesasPorFecha($conn, $fechaFiltro);
+  }
+  
+  function filtrarMesasPorFecha($conn, $fechaFiltro) {
+      try {
+          // Consulta SQL para filtrar mesas por fecha
+            $sqlFiltroFecha = "SELECT m.id_mesa, s.nombre AS nombre_sala, o.fecha_inicio, o.fecha_fin
+            FROM tbl_ocupacion o
+            JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
+            JOIN tbl_sala s ON m.id_sala = s.id_sala
+            WHERE  o.fecha_fin IS NOT NULL AND DATE (o.fecha_inicio) = ?
+            ORDER BY o.fecha_inicio";
+  
+          $stmtFiltroFecha = mysqli_prepare($conn, $sqlFiltroFecha);
+          mysqli_stmt_bind_param($stmtFiltroFecha, "s", $fechaFiltro);
+          mysqli_stmt_execute($stmtFiltroFecha);
+          $resultFiltroFecha = mysqli_stmt_get_result($stmtFiltroFecha);
+  
+          echo "<br>";
+          echo "<h2>Historial (Filtrado por fecha: $fechaFiltro)</h2>";
+          if ($resultFiltroFecha) {
+              if (mysqli_num_rows($resultFiltroFecha) > 0) {
+                  
+                  while ($row = mysqli_fetch_assoc($resultFiltroFecha)) {
+                      echo "ID Mesa: " . $row["id_mesa"] . "<br>";
+                      echo "Sala: " . $row["nombre_sala"] . "<br>";
+                      echo "Fecha Inicio: " . $row["fecha_inicio"] . "<br>";
+                      echo "Fecha Fin: " . $row["fecha_fin"] . "<br>";
+                      echo "<br>";
+                  }
+              } else {
+                  echo "<br>";
+                  echo "<p>No hay ocupaciones de mesas en la fecha seleccionada.</p>";
+              }
+          } else {
+              throw new Exception("Error en la consulta de filtrado por fecha: " . mysqli_error($conn));
+          }
+      } catch (Exception $e) {
+          echo "Error: " . $e->getMessage();
+      }
+  }
 
 ?>
 
@@ -129,6 +195,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
   </select>
   <input type="submit" value="Enviar">
 </form>
+
+<form action="home.php" method="post">
+  <label for="fechaFiltro">Filtrar por fecha:</label>
+  <input type="date" name="fechaFiltro">
+  <input type="submit" value="Filtrar">
+</form>
+
 <!-- mostramos las mesas que hay en la terraza -->
 <div class='terraza'>
         <form method="post" action="mostrar_mesas.php">
