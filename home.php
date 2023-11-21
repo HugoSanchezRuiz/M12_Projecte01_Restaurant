@@ -3,10 +3,10 @@ session_start();
 include_once("./conexion.php");
 
 // Comprobar si el usuario ha iniciado sesión
-if (!isset($_SESSION['id_camarero'])) {
-    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
-    exit();
-}
+// if (!isset($_SESSION['id_camarero'])) {
+//     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+//     exit();
+// }
 
 // Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
 function mostrarCamarerosOrdenadosPorMesas($conn) {
@@ -63,17 +63,14 @@ function filtrarMesasPorCapacidad($conn, $capacidadFiltro) {
   }
 }
 
+// verificamos que el formulario ha sido enviado por post y si contiene un campo llamado capacidadFiltro
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
   $capacidadFiltro = $_POST['capacidadFiltro'];
   
   filtrarMesasPorCapacidad($conn, $capacidadFiltro);
 }
 
-// Cerrar la conexión a la base de datos
-mysqli_close($conn);
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -115,6 +112,7 @@ mysqli_close($conn);
 <label for="filtro">Filtro de Mesas</label>
 <form action="home.php" method="post">
   <select name="capacidadFiltro">
+    <option disabled selected>Selecciona opción</option>
     <option value="2">2 personas</option>
     <option value="3">3 personas</option>
     <option value="4">4 personas</option>
@@ -179,10 +177,50 @@ mysqli_close($conn);
         <input type='submit' name='sala_4' value="sala_4">
     </form>
 </div>
-<br>
-<br>
-<br>
-<br>
+
+<div class="historial">
+<h2>Historial</h2>
+<?php
+try{
+    $sqlHistorial = "SELECT
+    m.id_mesa,
+    s.nombre AS nombre_sala,
+    o.fecha_inicio,
+    o.fecha_fin
+    FROM
+        tbl_ocupacion o
+        JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
+        JOIN tbl_sala s ON m.id_sala = s.id_sala
+    WHERE
+        o.fecha_fin IS NOT NULL
+    ORDER BY
+        o.fecha_inicio";
+
+    // Ejecutar la consulta
+    $resultHistorial =  mysqli_query($conn, $sqlHistorial);
+
+    // Verificar si se obtuvieron resultados
+    if ($resultHistorial->num_rows > 0) {
+    // Mostrar los resultados
+    while ($row = $resultHistorial->fetch_assoc()) {
+    echo "ID Mesa: " . $row["id_mesa"] . "<br>";
+    echo "Sala: " . $row["nombre_sala"] . "<br>";
+    echo "Fecha Inicio: " . $row["fecha_inicio"] . "<br>";
+    echo "Fecha Fin: " . $row["fecha_fin"] . "<br>";
+    echo "<br>";
+    }
+    } else {
+    echo "No se encontraron resultados";
+    }
+
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Cerrar la conexión a la base de datos
+mysqli_close($conn);
+?>
+</div>
 
 
 </body>
