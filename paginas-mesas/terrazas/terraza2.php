@@ -28,10 +28,10 @@
         </a>
         <!-- TERRAZAS -->
         <div class="salas flex">
-            <a href="./terraza1.php" class="secciones-secund seleccionado-ahora">
+            <a href="./terraza1.php" class="secciones-secund">
                 <p>Terraza 1</p>
             </a>
-            <a href="./terraza2.php" class="secciones-secund">
+            <a href="./terraza2.php" class="secciones-secund seleccionado-ahora">
                 <p>Terraza 2</p>
             </a>
             <a href="./terraza3.php" class="secciones-secund">

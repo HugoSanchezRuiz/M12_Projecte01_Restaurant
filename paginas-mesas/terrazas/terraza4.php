@@ -28,7 +28,7 @@
         </a>
         <!-- TERRAZAS -->
         <div class="salas flex">
-            <a href="./terraza1.php" class="secciones-secund seleccionado-ahora">
+            <a href="./terraza1.php" class="secciones-secund">
                 <p>Terraza 1</p>
             </a>
             <a href="./terraza2.php" class="secciones-secund">
@@ -37,7 +37,7 @@
             <a href="./terraza3.php" class="secciones-secund">
                 <p>Terraza 3</p>
             </a>
-            <a href="./terraza4.php" class="secciones-secund">
+            <a href="./terraza4.php" class="secciones-secund seleccionado-ahora">
                 <p>Terraza 4</p>
             </a>
         </div>
