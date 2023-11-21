@@ -2,6 +2,12 @@
 session_start();
 include_once("./conexion.php");
 
+// Comprobar si el usuario ha iniciado sesión
+if (!isset($_SESSION['id_camarero'])) {
+    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+    exit();
+}
+
 // Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
 function mostrarCamarerosOrdenadosPorMesas($conn) {
   try {
@@ -105,20 +111,7 @@ mysqli_close($conn);
   </div>
 </nav>
 
-<?php
-// inicia la sesion
-//session_start();
 
-// Comprobar si el usuario ha iniciado sesión
-// if (!isset($_SESSION['id_camarero'])) {
-//     header('Location: ./login.php'); // Redirige a la página de inicio de sesión
-//     exit();
-// }
-
-include_once("./conexion.php");
-
-
-?>
 <label for="filtro">Filtro de Mesas</label>
 <form action="home.php" method="post">
   <select name="capacidadFiltro">
