@@ -28,7 +28,7 @@
         </a>
         <!-- SALAS PRIVADAS -->
         <div class="salas flex">
-            <a href="./sala-privada1.php" class="secciones-secund seleccionado-ahora">
+            <a href="./sala-privada1.php" class="secciones-secund">
                 <p>Sala Privada 1</p>
             </a>
             <a href="./sala-privada2.php" class="secciones-secund">
@@ -37,7 +37,7 @@
             <a href="./sala-privada3.php" class="secciones-secund">
                 <p>Sala Privada 3</p>
             </a>
-            <a href="./sala-privada4.php" class="secciones-secund">
+            <a href="./sala-privada4.php" class="secciones-secund seleccionado-ahora">
                 <p>Sala Privada 4</p>
             </a>
         </div>
@@ -46,10 +46,10 @@
     <div class="row flex" id="">
         <div id="restaurante">
             <div class="column-1 terraza-mesa">
-                <img src="../../src/MESA-DE-10.png" class="img-mesas">
+                <img src="../../src/MESA-DE-15.png" class="img-mesas">
             </div>
             <div class="column-1 terraza-mesa">
-                <img src="../../src/MESA-DE-10.png" class="img-mesas">
+                <img src="../../src/MESA-DE-15.png" class="img-mesas">
             </div>
         </div>
         <div id="historial">
