@@ -138,6 +138,10 @@ mysqli_close($conn);
         <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_3' value="terraza_3">
         </form>
+
+        <form method="post" action="mostrar_mesas.php">
+            <input type='submit' name='terraza_4' value="terraza_4">
+        </form>
 </div>
 <br>
 <br>
@@ -150,6 +154,9 @@ mysqli_close($conn);
         </form>
         <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='comedor_2' value="comedor_2">
+        </form>
+        <form method="post" action="mostrar_mesas.php">
+            <input type='submit' name='comedor_3' value="comedor_3">
         </form>
 </div>
 <br>

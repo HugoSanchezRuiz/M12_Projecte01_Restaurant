@@ -1,7 +1,12 @@
 <?php
 session_start();
-
 include_once("./conexion.php");
+
+// Comprobar si el usuario ha iniciado sesión
+if (!isset($_SESSION['id_camarero'])) {
+    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+    exit();
+}
 
 function mostrarMesas($nombreSala, $conn) {
     try {
@@ -58,17 +63,23 @@ if (isset($_POST['terraza_1'])) {
     mostrarMesas('terraza_2', $conn);
 } elseif (isset($_POST['terraza_3'])) {
     mostrarMesas('terraza_3', $conn);
-} elseif (isset($_POST['comedor_1'])) {
+} elseif (isset($_POST['terraza_4'])) {
+    mostrarMesas('terraza_4', $conn);
+}elseif (isset($_POST['comedor_1'])) {
     mostrarMesas('comedor_1', $conn);
 } elseif (isset($_POST['comedor_2'])) {
     mostrarMesas('comedor_2', $conn);
+} elseif (isset($_POST['comedor_3'])) {
+    mostrarMesas('comedor_3', $conn);
 } elseif (isset($_POST['sala_1'])) {
     mostrarMesas('sala_1', $conn);
 } elseif (isset($_POST['sala_2'])) {
     mostrarMesas('sala_2', $conn);
 } elseif (isset($_POST['sala_3'])) {
     mostrarMesas('sala_3', $conn);
-} else {
+} elseif (isset($_POST['sala_4'])) {
+    mostrarMesas('sala_4', $conn);
+}  else {
     // Redirigir o manejar de alguna manera si se accede a esta página de manera incorrecta
     header("Location: ./home.php");
     exit();
