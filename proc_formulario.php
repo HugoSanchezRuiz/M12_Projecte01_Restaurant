@@ -58,6 +58,7 @@ if (isset($_POST['usuario'])) {
         }
     }
 
+
     // Si hay errores
     if ($errores != "") {
         $datosRecibidos = array(
@@ -68,7 +69,13 @@ if (isset($_POST['usuario'])) {
         header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
         exit();
     } else {
-        header("Location: ./home.php");
+        $datosRecibidos = array(
+            'usuario' => $usuario
+        );
+        $datosDevueltos = http_build_query($datosRecibidos);
+        header("Location: ./home.php".$datosDevueltos);
+        exit();
+
     }
 } else {
     // Si 'usuario' no está presente en $_POST, manejar el caso según tus necesidades
