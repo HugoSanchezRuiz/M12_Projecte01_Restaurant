@@ -8,6 +8,8 @@ html {
     color: white;
 }
 
+/* HEADER */
+
 header {
     background-color: #0d2b33;
     height: 10vh;
@@ -17,23 +19,53 @@ header {
 }
 
 #logo {
-    margin: 0.5vh 1vh 0 2.5vh;
+    margin: 0.4vh 1vh 0 2.5vh;
     height: 8vh;
 }
 
 .secciones {
+    font-size: 2.2vh;
+    color: #fdf7ec;
+    text-align: right;
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 1.5vh;
+    transition: all 0.2s;
+}
+
+.secciones:hover {
+    border-bottom: 4px solid;
+    border-bottom-left-radius: 0.5vh;
+    border-bottom-right-radius: 0.5vh;
+}
+
+.secciones-secund {
     font-size: 1.8vh;
     color: #fdf7ec;
     text-align: right;
     text-decoration: none;
     font-weight: 500;
     margin: 0 1.5vh;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
-.secciones:hover {
-    font-size: 2vh;
+.secciones-secund:hover {
+    border-bottom: 4px solid;
+    border-bottom-left-radius: 0.5vh;
+    border-bottom-right-radius: 0.5vh;
 }
+
+.salas {
+    margin-left: 25vh;
+}
+
+.seleccionado-ahora {
+    border-bottom: 4px solid;
+    border-bottom-left-radius: 0.5vh;
+    border-bottom-right-radius: 0.5vh;
+}
+
+/* HTML */
 
 #conjunto {
     margin-top: 10vh;
@@ -51,15 +83,11 @@ header {
     background-color: grey;
 }
 
-.salas {
-    text-align: right;
-}
-
-.img-mesas{
+.img-mesas {
     object-fit: contain;
     width: 100%;
     height: 100%;
-	margin: auto;
+    margin: auto;
 }
 
 /* TERRAZAS */
