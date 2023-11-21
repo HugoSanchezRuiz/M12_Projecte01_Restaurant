@@ -3,10 +3,10 @@ session_start();
 include_once("./conexion.php");
 
 // Comprobar si el usuario ha iniciado sesión
-// if (!isset($_SESSION['id_camarero'])) {
-//     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
-//     exit();
-// }
+if (!isset($_SESSION['id_camarero'])) {
+    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+    exit();
+}
 
 // Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
 function mostrarCamarerosOrdenadosPorMesas($conn) {
@@ -38,30 +38,37 @@ function mostrarCamarerosOrdenadosPorMesas($conn) {
 mostrarCamarerosOrdenadosPorMesas($conn);
 
 function filtrarMesasPorCapacidad($conn, $capacidadFiltro) {
-  try {
-      // Consulta SQL para filtrar mesas por capacidad
-      $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre
-      FROM tbl_ocupacion o
-      RIGHT JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
-      INNER JOIN tbl_sala s ON m.id_sala = s.id_sala
-      WHERE o.id_ocupacion IS NULL AND m.capacidad = $capacidadFiltro
-      ORDER BY m.capacidad";
+    try {
+        // Consulta SQL para filtrar mesas por capacidad
+        $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre
+                      FROM tbl_ocupacion o
+                      RIGHT JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
+                      INNER JOIN tbl_sala s ON m.id_sala = s.id_sala
+                      WHERE o.id_ocupacion IS NULL AND m.capacidad = $capacidadFiltro
+                      ORDER BY m.capacidad";
 
-      $resultFiltro = mysqli_query($conn, $sqlFiltro);
-
-      if ($resultFiltro) {
-          echo "<h2>Mesas Disponibles (Filtradas por capacidad: $capacidadFiltro personas)</h2>";
-          while ($row = mysqli_fetch_assoc($resultFiltro)) {
-              echo "<p>Mesa: " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'] . " - Sala: " . $row['sala_nombre'] . "</p>";
-          }
-      } else {
-          throw new Exception("Error en la consulta de filtrado: " . mysqli_error($conn));
-      }
-
-  } catch (Exception $e) {
-      echo "Error: " . $e->getMessage();
-  }
+        $resultFiltro = mysqli_query($conn, $sqlFiltro);
+        
+        echo "<br>";
+        echo "<h2>Mesas Disponibles (Filtradas por capacidad: $capacidadFiltro personas)</h2>";
+        if ($resultFiltro) {
+            if (mysqli_num_rows($resultFiltro) > 0) {
+                
+                while ($row = mysqli_fetch_assoc($resultFiltro)) {
+                    echo "<p>Mesa: " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'] . " - Sala: " . $row['sala_nombre'] . "</p>";
+                }
+            } else {
+                echo "<br>";
+                echo "<p>No hay mesas disponibles con la capacidad seleccionada.</p>";
+            }
+        } else {
+            throw new Exception("Error en la consulta de filtrado: " . mysqli_error($conn));
+        }
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 }
+
 
 // verificamos que el formulario ha sido enviado por post y si contiene un campo llamado capacidadFiltro
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
