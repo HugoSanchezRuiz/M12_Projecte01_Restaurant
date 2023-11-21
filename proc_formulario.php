@@ -6,13 +6,13 @@ $errores = "";
 if (isset($_POST['usuario'])) {
     // Recogemos los datos que ha introducido el usuario
     $usuario = $_POST['usuario'];
-    echo $usuario;
+
     // Incluir el archivo de funciones
     require_once('./funciones.php');
     // Incluir el archivo de conexión a la base de datos
     include_once("./conexion.php");
 
-    // Consulta para verificar si el usuario ya existe
+    // Verificar si el usuario ya existe en la base de datos
     $sql_check = "SELECT COUNT(*) FROM tbl_camarero WHERE nombre = ?";
     $stmt_check = mysqli_stmt_init($conn);
 
@@ -23,24 +23,50 @@ if (isset($_POST['usuario'])) {
     mysqli_stmt_fetch($stmt_check);
     mysqli_stmt_close($stmt_check);
 
-    if ($user_count > 0) {
-        // El usuario ya existe, agrega un mensaje de error a la variable $errores
+    if ($user_count === 0) {
+        // El usuario no existe, agregar un mensaje de error a la variable $errores
         if ($errores) {
-            $errores .= '&nombreExist=true';
+            $errores .= '&nombreNotExist=true';
         } else {
-            $errores = '?nombreExist=true';
+            $errores = '?nombreNotExist=true';
+        }
+    } else {
+        // El usuario existe, ahora verificamos la contraseña
+        $pwd = $_POST['pwd']; // Asegúrate de que estás recogiendo la contraseña del formulario
+
+        // Consulta para obtener la contraseña almacenada en la base de datos
+        $sql_password = "SELECT contra FROM tbl_camarero WHERE nombre = ?";
+        $stmt_password = mysqli_stmt_init($conn);
+
+        mysqli_stmt_prepare($stmt_password, $sql_password);
+        mysqli_stmt_bind_param($stmt_password, "s", $usuario);
+        mysqli_stmt_execute($stmt_password);
+        mysqli_stmt_bind_result($stmt_password, $stored_password);
+        mysqli_stmt_fetch($stmt_password);
+        mysqli_stmt_close($stmt_password);
+
+        // Verificar si la contraseña ingresada coincide con la almacenada en la base de datos
+        if (!password_verify($password, $stored_password)) {
+            // La contraseña no coincide, agregar un mensaje de error a la variable $errores
+            if ($errores) {
+                $errores .= '&passwdIncorrect=true';
+            } else {
+                $errores = '?passwdIncorrect=true';
+            }
         }
     }
 
     // Si hay errores
-    if ($errores != "") {
-        $datosRecibidos = array(
-            'usuario' => $usuario
-        );
-        $datosDevueltos = http_build_query($datosRecibidos);
-        header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
-        exit();
-    }
+if ($errores != "") {
+    $datosRecibidos = array(
+        'usuario' => $usuario,
+        'pwd' => $pwd 
+    );
+    $datosDevueltos = http_build_query($datosRecibidos);
+    header("Location: ./formulario.php" . $errores . "&" . $datosDevueltos);
+    exit();
+}
+
 } else {
     // Si 'usuario' no está presente en $_POST, manejar el caso según tus necesidades
     // Por ejemplo, redirigir o mostrar un mensaje de error
