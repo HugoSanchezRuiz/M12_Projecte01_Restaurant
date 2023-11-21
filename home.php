@@ -2,7 +2,7 @@
 session_start();
 include_once("./conexion.php");
 
-// Comprobar si el usuario ha iniciado sesión
+//Comprobar si el usuario ha iniciado sesión
 if (!isset($_SESSION['id_camarero'])) {
     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
     exit();
@@ -40,12 +40,11 @@ mostrarCamarerosOrdenadosPorMesas($conn);
 function filtrarMesasPorCapacidad($conn, $capacidadFiltro) {
     try {
         // Consulta SQL para filtrar mesas por capacidad
-        $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre
-                      FROM tbl_ocupacion o
-                      RIGHT JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
-                      INNER JOIN tbl_sala s ON m.id_sala = s.id_sala
-                      WHERE o.id_ocupacion IS NULL AND m.capacidad = $capacidadFiltro
-                      ORDER BY m.capacidad";
+        $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre 
+        FROM tbl_mesa m 
+        INNER JOIN tbl_sala s ON m.id_sala = s.id_sala 
+        WHERE m.capacidad = $capacidadFiltro AND m.ocupada = 0 
+        ORDER BY m.capacidad";
 
         $resultFiltro = mysqli_query($conn, $sqlFiltro);
         
