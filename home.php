@@ -213,8 +213,12 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
     echo "<div id='camareroFilter' class='visible'>";
     mostrarCamarerosOrdenadosPorMesas($conn);
     echo "</div>";
+    ?>
+    
+    <button onclick="toggleFilter('camareroFilter')"">Mostrar/Ocultar Filtro de Camareros</button><br>
+    <?php
 
-
+    echo "<br>";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
         $capacidadFiltro = $_POST['capacidadFiltro'];
@@ -224,8 +228,6 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
         echo "</div>";
     }
     ?>
-
-    <button onclick="toggleFilter('camareroFilter')">Mostrar/Ocultar Filtro de Camareros</button>
 
     <label for="filtro">Filtro de Mesas</label>
     <form action="home.php" method="post">
@@ -240,7 +242,8 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
             <option value="15">15 personas</option>
         </select>
         <input type="submit" value="Enviar">
-    </form>
+    </form><br>
+    <br>
 
     <button onclick="toggleFilter('capacidadFilter')">Mostrar/Ocultar Filtro de Capacidad</button>
 
@@ -254,7 +257,8 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
         echo "</div>";
     }
     ?>
-
+    <br>
+    <br>
     <form action="home.php" method="post" onsubmit="return validar_fecha()">
         <label for="fechaFiltro">Filtrar por fecha:</label>
         <input type="date" id="fecha" name="fechaFiltro">
@@ -262,9 +266,11 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
         <br>
 
         <span id="error_fecha"></span>
-    </form>
+    </form><br>
+    <br>
 
-    <button onclick="toggleFilter('fechaFilter')">Mostrar/Ocultar Filtro por Fecha</button>
+    <button onclick="toggleFilter('fechaFilter')">Mostrar/Ocultar Filtro por Fecha</button><br>
+    <br>
 
     <!-- mostramos las mesas que hay en la terraza -->
     <div class='terraza'>
