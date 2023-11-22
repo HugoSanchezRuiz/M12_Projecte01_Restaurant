@@ -12,17 +12,20 @@ include_once("./conexion.php");
 function mostrarCamarerosOrdenadosPorMesas($conn) {
     try {
         // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
-        $sqlCamareros = "SELECT c.nombre as nombre_camarero, COUNT(o.id_mesa) as num_mesas_ocupadas,
-            GROUP_CONCAT(o.id_mesa ORDER BY o.id_mesa) as mesas_ocupadas_ids,
-            GROUP_CONCAT(o.num_veces_ocupada ORDER BY o.id_mesa) as veces_ocupada
-            FROM tbl_camarero c
-            LEFT JOIN (
-                SELECT id_camarero, id_mesa, COUNT(*) as num_veces_ocupada
-                FROM tbl_ocupacion
-                GROUP BY id_camarero, id_mesa
-            ) o ON c.id_camarero = o.id_camarero
-            GROUP BY c.id_camarero
-            ORDER BY num_mesas_ocupadas DESC";
+        $sqlCamareros = "SELECT
+        c.nombre as nombre_camarero,
+        COUNT(o.id_mesa) as num_mesas_ocupadas,
+        GROUP_CONCAT(o.id_mesa ORDER BY o.id_mesa) as mesas_ocupadas_ids,
+        GROUP_CONCAT(o.num_veces_ocupada ORDER BY o.id_mesa) as veces_ocupada,
+        GROUP_CONCAT(DISTINCT o.fecha_inicio ORDER BY o.id_mesa) as fechas_inicio
+    FROM tbl_camarero c
+    LEFT JOIN (
+        SELECT id_camarero, id_mesa, COUNT(*) as num_veces_ocupada, fecha_inicio as fecha_inicio
+        FROM tbl_ocupacion o
+        GROUP BY id_camarero, id_mesa
+    ) o ON c.id_camarero = o.id_camarero
+    GROUP BY c.id_camarero
+    ORDER BY num_mesas_ocupadas DESC;";
 
         $stmtCamareros = mysqli_prepare($conn, $sqlCamareros);
         mysqli_stmt_execute($stmtCamareros);
@@ -34,19 +37,37 @@ function mostrarCamarerosOrdenadosPorMesas($conn) {
 
         if ($resultCamareros->num_rows > 0) {
             echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
-            echo "<br>";
             while ($row = mysqli_fetch_assoc($resultCamareros)) {
+                echo "<p>------------------------</p>";
                 echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
-                echo "<br>";
                 echo "<p>Mesas Ocupadas:</p>";
-                echo "<br>";
+            
                 $mesasIds = explode(",", $row['mesas_ocupadas_ids']);
                 $vecesOcupada = explode(",", $row['veces_ocupada']);
-
+                $fechasInicio = explode(",", $row['fechas_inicio']);
+            
                 for ($i = 0; $i < count($mesasIds); $i++) {
-                    echo "Mesa ID: " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i] . "<br>";
+                    echo "Mesa ID: " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i];
+            
+                    // Si la mesa se ha ocupado más de una vez, mostrar las fechas correspondientes
+                    if ($vecesOcupada[$i] > 1) {
+                        echo "<ul>";
+                        for ($j=0; $j < $vecesOcupada[$i]; $j++) { 
+                            echo "<li>Ocupación " . ($j + 1) . ": " . $fechasInicio[$i] . "</li>";
+                        }
+                        echo "</ul>";
+                    } else {
+                        echo " - Fecha Inicio: " . $fechasInicio[$i];
+                        echo "<br>";
+                    }
+            
+                    echo "<br>";
                 }
-            }
+                echo "<p>------------------------</p>";
+            }            
+            
+            
+            
         } else {
             echo "<p>No hay resultados.</p>";
         }
@@ -54,6 +75,8 @@ function mostrarCamarerosOrdenadosPorMesas($conn) {
         echo "Error: " . $e->getMessage();
     }
 }
+
+
 
 // Luego, puedes llamar a esta función según sea necesario.
 mostrarCamarerosOrdenadosPorMesas($conn);
@@ -64,10 +87,13 @@ function filtrarMesasPorCapacidad($conn, $capacidadFiltro) {
         $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre 
         FROM tbl_mesa m 
         INNER JOIN tbl_sala s ON m.id_sala = s.id_sala 
-        WHERE m.capacidad = $capacidadFiltro AND m.ocupada = 0 
+        WHERE m.capacidad = ? AND m.ocupada = 0 
         ORDER BY m.capacidad";
 
-        $resultFiltro = mysqli_query($conn, $sqlFiltro);
+        $stmtFiltro = mysqli_prepare($conn, $sqlFiltro);
+        mysqli_stmt_bind_param($stmtFiltro, "i", $capacidadFiltro);
+        mysqli_stmt_execute($stmtFiltro);
+        $resultFiltro = mysqli_stmt_get_result($stmtFiltro);
         
         echo "<br>";
         echo "<h2>Mesas Disponibles (Filtradas por capacidad: $capacidadFiltro personas)</h2>";
