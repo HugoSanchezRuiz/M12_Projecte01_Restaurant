@@ -38,12 +38,12 @@ CREATE TABLE tbl_ocupacion (
 );
 
 INSERT INTO tbl_camarero (nombre, contra) VALUES
-    ('camarero_1', SHA2('camarero11234'), 256),
-    ('camarero_2', SHA2('camarero21234'), 256),
-    ('camarero_3', SHA2('camarero31234'), 256),
-    ('camarero_4', SHA2('camarero41234'), 256),
-    ('camarero_5', SHA2('camarero51234'), 256),
-    ('camarero_6', SHA2('camarero61234'), 256);
+    ('camarero_1', SHA2('camarero11234', 256)),
+    ('camarero_2', SHA2('camarero21234', 256)),
+    ('camarero_3', SHA2('camarero31234', 256)),
+    ('camarero_4', SHA2('camarero41234', 256)),
+    ('camarero_5', SHA2('camarero51234', 256)),
+    ('camarero_6', SHA2('camarero61234', 256));
 
 -- Inserción de Salas
 INSERT INTO tbl_sala (nombre, tipo_sala, capacidad) VALUES
