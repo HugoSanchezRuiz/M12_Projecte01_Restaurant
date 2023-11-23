@@ -143,14 +143,14 @@ if (isset($_POST['terraza_1'])) {
     mostrarMesas('comedor_2', $conn);
 } elseif (isset($_POST['comedor_3'])) {
     mostrarMesas('comedor_3', $conn);
-} elseif (isset($_POST['sala_1'])) {
-    mostrarMesas('sala_1', $conn);
-} elseif (isset($_POST['sala_2'])) {
-    mostrarMesas('sala_2', $conn);
-} elseif (isset($_POST['sala_3'])) {
-    mostrarMesas('sala_3', $conn);
-} elseif (isset($_POST['sala_4'])) {
-    mostrarMesas('sala_4', $conn);
+} elseif (isset($_POST['sala_privada_1'])) {
+    mostrarMesas('sala_privada_1', $conn);
+} elseif (isset($_POST['sala_privada_2'])) {
+    mostrarMesas('sala_privada_2', $conn);
+} elseif (isset($_POST['sala_privada_3'])) {
+    mostrarMesas('sala_privada_3', $conn);
+} elseif (isset($_POST['sala_privada_4'])) {
+    mostrarMesas('sala_privada_4', $conn);
 }  else {
     // Redirigir o manejar de alguna manera si se accede a esta página de manera incorrecta
     header("Location: ./home.php");
