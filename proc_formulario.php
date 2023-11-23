@@ -58,6 +58,15 @@
             // Verificar si la contraseña ingresada coincide con la almacenada en la base de datos
             if (hash_equals($pwdEncriptada, $stored_password)) {
                 // Contraseña coincide, mostrar la alerta y redirigir a home.php
+                 // Contraseña coincide, redirigir a sesiones.php
+                 $datosRecibidos = array(
+                    'usuario' => $usuario
+
+                );
+                $datosDevueltos = http_build_query($datosRecibidos);
+                header("Location: ./sessiones.php?" .  $datosDevueltos);
+                exit();
+                    
                 ?>
                 <script>
                     function pasar() {
@@ -66,8 +75,15 @@
                             text: "Has entrado a la página principal",
                             icon: "success",
                         }).then(() => {
-                            // Redirigir a home.php después de la espera
-                            window.location.href = './home.php';
+                       // Contraseña coincide, redirigir a sesiones.php
+                        $datosRecibidos = array(
+                            'usuario' => $usuario
+
+                        );
+                        $datosDevueltos = http_build_query($datosRecibidos);
+                        header("Location: ./sessiones.php?" .  $datosDevueltos);
+                        exit();
+                            
                         });
                     }
                     document.addEventListener("DOMContentLoaded", function () {
