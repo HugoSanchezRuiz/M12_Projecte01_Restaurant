@@ -3,6 +3,15 @@ session_start();
 include_once("./conexion.php");
 
 // Establecer valores predeterminados para los filtros si no están configurados
+// if (!isset($_SESSION['capacidadFiltro'])) {
+//     $_SESSION['capacidadFiltro'] = null;
+// }
+
+// if (!isset($_SESSION['fechaFiltro'])) {
+//     $_SESSION['fechaFiltro'] = null;
+// }
+
+// Set default values for filters if not configured
 if (!isset($_SESSION['capacidadFiltro'])) {
     $_SESSION['capacidadFiltro'] = null;
 }
@@ -11,6 +20,15 @@ if (!isset($_SESSION['fechaFiltro'])) {
     $_SESSION['fechaFiltro'] = null;
 }
 
+// Handle form submission and update session variables
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['capacidadFiltro'])) {
+        $_SESSION['capacidadFiltro'] = $_POST['capacidadFiltro'];
+    }
+    if (isset($_POST['fechaFiltro'])) {
+        $_SESSION['fechaFiltro'] = $_POST['fechaFiltro'];
+    }
+}
 
 //Comprobar si el usuario ha iniciado sesión
 // if (!isset($_SESSION['usuario'])) {
@@ -115,6 +133,7 @@ function filtrarMesasPorCapacidad($conn, $capacidadFiltro)
             if (mysqli_num_rows($resultFiltro) > 0) {
 
                 while ($row = mysqli_fetch_assoc($resultFiltro)) {
+                    echo "unoooooooooooo";
                     echo "<p>Mesa: " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'] . " - Sala: " . $row['sala_nombre'] . "</p>";
                 }
             } else {
@@ -249,31 +268,9 @@ if (isset($_SESSION['capacidadFiltro'])) {
     $_SESSION['resultFiltroCapacidad'] = filtrarMesasPorCapacidad($conn, $capacidadFiltro);
 }
 
-// Antes de ejecutar la consulta de filtrado por fecha
-if (isset($_SESSION['fechaFiltro'])) {
-    $fechaFiltro = $_SESSION['fechaFiltro'];
-    $_SESSION['resultFiltroFecha'] = filtrarMesasPorFecha($conn, $fechaFiltro);
-}
 
-    echo "<div id='camareroFilter' class='visible'>";
-    mostrarCamarerosOrdenadosPorMesas($conn);
-    echo "</div>";
-    ?>
+?>
 
-    <button onclick="toggleFilter('camareroFilter')">Mostrar/Ocultar Filtro de Camareros</button><br>
-    <?php
-
-    echo "<br>";
-
-    if (isset($_SESSION['capacidadFiltro'])) {
-        //$capacidadFiltro = $_POST['capacidadFiltro'];
-
-        echo "<div id='capacidadFilter' class='visible'>";
-
-        filtrarMesasPorCapacidad($conn, $_SESSION['capacidadFiltro']);
-        echo "</div>";
-    }
-    ?>
 
     <label for="filtro">Filtro de Mesas</label>
     <form action="filtros_sessiones.php" method="post">
