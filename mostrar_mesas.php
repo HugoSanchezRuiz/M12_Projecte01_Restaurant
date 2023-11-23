@@ -33,14 +33,33 @@ function mostrarMesas($nombreSala, $conn) {
             while ($row = mysqli_fetch_assoc($resultSala)) {
                 echo "<button type='submit' name='mesa_id' value='" . $row['id_mesa'] . "' ";
 
+                // Concatenar clases para ocupación
                 if ($row['ocupada']) {
-                    echo "class='ocupada'";
+                    echo "class='ocupada ";
                 } else {
-                    echo "class='no-ocupada'";
+                    echo "class='no-ocupada ";
                 }
-
+            
+                // Concatenar clases para capacidad
+                if ($row['capacidad'] = 2) {
+                    echo "mesa-2'";
+                } elseif ($row['capacidad'] = 3) {
+                    echo "mesa-3'";
+                }  elseif ($row['capacidad'] = 4) {
+                    echo "mesa-4'";
+                }  elseif ($row['capacidad'] = 6) {
+                    echo "mesa-6'";
+                }  elseif ($row['capacidad'] = 8) {
+                    echo "mesa-8'";
+                }  elseif ($row['capacidad'] = 10) {
+                    echo "mesa-10'";
+                } 
+                else {
+                    echo "mesa-15'";
+                }
+            
                 echo ">Mesa " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'];
-
+            
                 echo "</button>";
             }
             echo "</form>";
