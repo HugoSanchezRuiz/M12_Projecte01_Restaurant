@@ -2,11 +2,21 @@
 session_start();
 include_once("./conexion.php");
 
-//Comprobar si el usuario ha iniciado sesión
-if (!isset($_SESSION['usuario'])) {
-    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
-    exit();
+// Establecer valores predeterminados para los filtros si no están configurados
+if (!isset($_SESSION['capacidadFiltro'])) {
+    $_SESSION['capacidadFiltro'] = null;
 }
+
+if (!isset($_SESSION['fechaFiltro'])) {
+    $_SESSION['fechaFiltro'] = null;
+}
+
+
+//Comprobar si el usuario ha iniciado sesión
+// if (!isset($_SESSION['usuario'])) {
+//     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+//     exit();
+// }
 
 // Función para mostrar las mesas ocupadas por los camareros que más mesas han ocupado
 function mostrarCamarerosOrdenadosPorMesas($conn)
@@ -74,6 +84,14 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
     }
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['capacidadFiltro'])) {
+        $_SESSION['capacidadFiltro'] = $_POST['capacidadFiltro'];
+    }
+    if (isset($_POST['fechaFiltro'])) {
+        $_SESSION['fechaFiltro'] = $_POST['fechaFiltro'];
+    }
+}
 
 function filtrarMesasPorCapacidad($conn, $capacidadFiltro)
 {
@@ -156,6 +174,7 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
 ?>
 
 
+
 <!DOCTYPE html>
 <html>
 
@@ -210,21 +229,32 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
     </nav>
     <?php
 
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Solo asignar las variables de sesión si el formulario ha sido enviado
+        if (isset($_POST['capacidadFiltro'])) {
+            $_SESSION['capacidadFiltro'] = $_POST['capacidadFiltro'];
+        }
+        if (isset($_POST['fechaFiltro'])) {
+            $_SESSION['fechaFiltro'] = $_POST['fechaFiltro'];
+        }
+    }
+
     echo "<div id='camareroFilter' class='visible'>";
     mostrarCamarerosOrdenadosPorMesas($conn);
     echo "</div>";
     ?>
-    
-    <button onclick="toggleFilter('camareroFilter')"">Mostrar/Ocultar Filtro de Camareros</button><br>
+
+    <button onclick="toggleFilter('camareroFilter')">Mostrar/Ocultar Filtro de Camareros</button><br>
     <?php
 
     echo "<br>";
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['capacidadFiltro'])) {
-        $capacidadFiltro = $_POST['capacidadFiltro'];
+    if (isset($_SESSION['capacidadFiltro'])) {
+        //$capacidadFiltro = $_POST['capacidadFiltro'];
+
         echo "<div id='capacidadFilter' class='visible'>";
 
-        filtrarMesasPorCapacidad($conn, $capacidadFiltro);
+        filtrarMesasPorCapacidad($conn, $_SESSION['capacidadFiltro']);
         echo "</div>";
     }
     ?>
@@ -249,11 +279,11 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
 
     <?php
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['fechaFiltro'])) {
-        $fechaFiltro = $_POST['fechaFiltro'];
+    if (isset($_SESSION['fechaFiltro'])) {
+        //$fechaFiltro = $_POST['fechaFiltro'];
 
         echo "<div id='fechaFilter' class='visible'>";
-        filtrarMesasPorFecha($conn, $fechaFiltro);
+        filtrarMesasPorFecha($conn, $_SESSION['fechaFiltro']);
         echo "</div>";
     }
     ?>
@@ -280,17 +310,14 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
 
         <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_2' value="terraza_2">
-            <!-- <input type='hidden' name='terraza_1' value="$usuario"> -->
         </form>
 
         <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_3' value="terraza_3">
-            <!-- <input type='hidden' name='terraza_1' value="$usuario"> -->
         </form>
 
         <form method="post" action="mostrar_mesas.php">
             <input type='submit' name='terraza_4' value="terraza_4">
-            <!-- <input type='hidden' name='terraza_1' value="$usuario"> -->
         </form>
     </div>
     <br>
@@ -317,16 +344,16 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
     <!-- mostramos las mesas que hay en la sala privada -->
     <div class='sala-privada'>
         <form method="post" action="mostrar_mesas.php">
-            <input type='submit' name='sala_privada_1' value="sala_privada_1">
+            <input type='submit' name='sala_1' value="sala_1">
         </form>
         <form method="post" action="mostrar_mesas.php">
-            <input type='submit' name='sala_privada_2' value="sala_privada_2">
+            <input type='submit' name='sala_2' value="sala_2">
         </form>
         <form method="post" action="mostrar_mesas.php">
-            <input type='submit' name='sala_privada_3' value="sala_privada_3">
+            <input type='submit' name='sala_3' value="sala_3">
         </form>
         <form method="post" action="mostrar_mesas.php">
-            <input type='submit' name='sala_privada_4' value="sala_privada_4">
+            <input type='submit' name='sala_4' value="sala_4">
         </form>
     </div>
 
