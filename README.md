@@ -1,1 +1,5 @@
-# M12_Projecte01_Restaurant
+# M12_Projecte01_Restaurant - Bar SinNombre - Integrantes: Ian Romero, Carla Maldonado, Joan Berrecil y Hugo Sánchez
+
+Como se nos pedía en el enunciado del proyecto hemos creado una página web para los camareros que trabajan en un restaurante. Primero se accede a un login dónde el camarero mete su usuario y su contraseña y si coinciden en la base de datos se entra a la página de introducción dónde se le explica al camarero que debe hacer en la web. En el navbar tendremos un botón con las salas que si hacen click en ellas se mostrarán las mesas correspondientes de cada sala. También hay un botón de logout para cuando acabe su jornada laboral.
+
+Una vez se accede a una sala, se ve cada mesa con una imagen metida en un botón para que sea clickable. Cuando clickamos en la mesa se hará un insert o un update en función del estado de la mesa en ese momento. A la derecha tendremos el apartado de filtros dónde filtraremos para encontrar las mesas disponibles según su cantidad, el camarero que más ocupaciones ha realizado, el historial por fechas y el historial total. Se puede mostrar u ocultar el resultado del filtro clickando en los botones que hay abajo de cada uno.
