@@ -1,6 +1,8 @@
 <?php
+//Iniciamos sesión
 session_start();
-include_once("./inc/conexion.php");
+//Hacemos conexión
+include_once("./conexion.php");
 
 // Comprobar si el usuario ha iniciado sesión
 // if (!isset($_SESSION['usuario'])) {
@@ -86,7 +88,7 @@ include_once("./inc/conexion.php");
 function mostrarCamarerosOrdenadosPorMesas($conn)
 {
     try {
-        // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
+        // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado con la fecha de inicio correspondiente con la ocupación
         $sqlCamareros = "
     SELECT
         c.nombre as nombre_camarero,
@@ -110,7 +112,7 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
     ORDER BY num_mesas_ocupadas DESC;
 ";
 
-
+        // Ejecutar la consulta
         $stmtCamareros = mysqli_prepare($conn, $sqlCamareros);
         mysqli_stmt_execute($stmtCamareros);
         $resultCamareros = mysqli_stmt_get_result($stmtCamareros);
@@ -119,27 +121,37 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
             die("Error en la consulta: " . mysqli_error($conn));
         }
 
+        //Si la consulta da resultados muestra toda la información que recoge la consulta
         if (mysqli_num_rows($resultCamareros) > 0) {
-            echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
+
+            //Recorre los resultados
             while ($row = mysqli_fetch_assoc($resultCamareros)) {
                 echo "<p>------------------------</p>";
+                //Muestra todos los camareros y el numero de mesas que han ocupado
                 echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
-                
+                echo "<br>";
+                //Si ha ocupado alguna mesa entra en el if si no mostrará solo la linea de arriba
                 if ($row['num_mesas_ocupadas'] > 0) {
-                    echo "<p>Mesas Ocupadas:</p>";
                     
+                    //Se mostrarán todas las mesas que ha ocupado un camarero
+                    echo "<p>Mesas Ocupadas:</p>";
+                    echo "<br>";
+
+                    //Utilizamos la función explode para dividir una cadena en un array de subcadenas, es decir, para hacer un subarray
                     $mesasIds = explode(",", $row['mesas_ocupadas_ids']);
                     $vecesOcupada = explode(",", $row['veces_ocupada']);
                     $fechasInicio = explode(",", $row['fechas_inicio']);
 
+                    //Inicializamos un contador para que se le sume cuando entre en el for
                     $totalVecesOcupadas = 0;
 
+                    //Se hará un for para contar las mesas y las veces que se han ocupado y las ocupaciones totales
                     for ($i = 0; $i < count($mesasIds); $i++) {
                         if ($mesasIds[$i] != null && $vecesOcupada[$i] != null) {
                             echo "Mesa " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i];
                             $totalVecesOcupadas += $vecesOcupada[$i];
-                            
-                            // Si la mesa se ha ocupado más de una vez, mostrar las fechas correspondientes
+
+                            // Si la mesa se ha ocupado más de una vez, mostrar la ocupación con su fechas correspondientes
                             if ($vecesOcupada[$i] > 1) {
                                 echo "<ul>";
                                 for ($j = 0; $j < $vecesOcupada[$i]; $j++) {
@@ -152,14 +164,14 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
                                     echo "<br>";
                                 }
                             }
-                            
+
                             echo "<br>";
                             echo "<br>";
                         }
                     }
+                    //Mostramos las ocupaciones totales
                     echo "Total ocupaciones: " . $totalVecesOcupadas;
                 }
-                
             }
         } else {
             echo "<p>No hay resultados.</p>";
@@ -181,19 +193,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 function filtrarMesasPorCapacidad($conn, $capacidadFiltro)
 {
     try {
-        // Consulta SQL para filtrar mesas por capacidad
+        // Consulta SQL para filtrar las mesas disponibles por capacidad
         $sqlFiltro = "SELECT m.id_mesa, m.capacidad, s.nombre as sala_nombre 
         FROM tbl_mesa m 
         INNER JOIN tbl_sala s ON m.id_sala = s.id_sala 
         WHERE m.capacidad = ? AND m.ocupada = 0 
         ORDER BY m.capacidad";
-
+        // Ejecutar la consulta
         $stmtFiltro = mysqli_prepare($conn, $sqlFiltro);
         mysqli_stmt_bind_param($stmtFiltro, "i", $capacidadFiltro);
         mysqli_stmt_execute($stmtFiltro);
         $resultFiltro = mysqli_stmt_get_result($stmtFiltro);
 
+        //Mostraremos las mesa que recoja en la consulta en función del valor de la variable $capacidadFiltro que será la capacidad de la mesa que queremos filtrar
         echo "<h2>Filtradas por capacidad: $capacidadFiltro personas</h2>";
+        echo "<br>";
         if ($resultFiltro) {
             if (mysqli_num_rows($resultFiltro) > 0) {
 
@@ -213,36 +227,39 @@ function filtrarMesasPorCapacidad($conn, $capacidadFiltro)
 }
 
 
-// verificamos que el formulario ha sido enviado por post y si contiene un campo llamado capacidadFiltro
+// Verificamos que el formulario ha sido enviado por post y si contiene un campo llamado capacidadFiltro
 
 function filtrarMesasPorFecha($conn, $fechaFiltro)
 {
     try {
-        // Consulta SQL para filtrar mesas por fecha
+        // Consulta SQL para filtrar mesas por fecha en la que se ocupó
         $sqlFiltroFecha = "SELECT m.id_mesa, s.nombre AS nombre_sala, o.fecha_inicio, o.fecha_fin
             FROM tbl_ocupacion o
             JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
             JOIN tbl_sala s ON m.id_sala = s.id_sala
             WHERE  o.fecha_fin IS NOT NULL AND DATE (o.fecha_inicio) = ?
             ORDER BY o.fecha_inicio";
-
+        // Ejecutar la consulta
         $stmtFiltroFecha = mysqli_prepare($conn, $sqlFiltroFecha);
         mysqli_stmt_bind_param($stmtFiltroFecha, "s", $fechaFiltro);
         mysqli_stmt_execute($stmtFiltroFecha);
         $resultFiltroFecha = mysqli_stmt_get_result($stmtFiltroFecha);
 
         echo "<br>";
+        //Se comprobará que haya resultados y si hay se mostrarán todas las mesas que recoja la consulta
         echo "<h4>$fechaFiltro</h4>";
         if ($resultFiltroFecha) {
             if (mysqli_num_rows($resultFiltroFecha) > 0) {
 
                 while ($row = mysqli_fetch_assoc($resultFiltroFecha)) {
+                    echo "<br>";
                     echo "ID Mesa: " . $row["id_mesa"] . "<br>";
                     echo "Sala: " . $row["nombre_sala"] . "<br>";
                     echo "Fecha Inicio: " . $row["fecha_inicio"] . "<br>";
                     echo "Fecha Fin: " . $row["fecha_fin"] . "<br>";
                 }
             } else {
+                // Si no hay resultado mostrará este texto
                 echo "<p>No hay ocupaciones de mesas en la fecha seleccionada.</p>";
             }
         } else {
@@ -266,6 +283,8 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/home.css">
+    <!-- Añadimos una función que recoge los botones para mostrar u ocultar los resultados de los filtros en función del valor de la variable filterId. 
+        Le asignaremos las clases hidden para esconder y visible para mostrar -->
     <script>
         function toggleFilter(filterId) {
             var filter = document.getElementById(filterId);
@@ -282,84 +301,64 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
             <?php
             function mostrarMesas($nombreSala, $conn)
             {
-                try {
-                    mysqli_autocommit($conn, false);
-                    mysqli_begin_transaction($conn);
 
-                    // $sqlSala = "SELECT COUNT(id_mesa) AS num_mesas FROM tbl_mesa 
-                    // WHERE id_sala = (SELECT id_sala FROM tbl_sala WHERE nombre = '$nombreSala')";
-                    // -- Consulta para mostrar las mesas de una sala específica
-                    $sqlSala = "SELECT
-            -- COUNT(ms.id_mesa)
-            ms.id_mesa,
-            ms.capacidad,
-            ms.ocupada
-        FROM
-            tbl_mesa ms
-        JOIN
-            tbl_sala sl ON ms.id_sala = sl.id_sala
-        WHERE
-            sl.nombre = '$nombreSala'";
+                // -- Consulta para mostrar las mesas de una sala específica
+                $sqlSala = "SELECT ms.id_mesa, ms.capacidad, ms.ocupada 
+            FROM tbl_mesa ms
+            JOIN tbl_sala sl ON ms.id_sala = sl.id_sala
+            WHERE sl.nombre = ?";
 
-                    // Ejecutar la consulta
-                    $resultSala = mysqli_query($conn, $sqlSala);
+                // Ejecutar la consulta
+                $stmtMesas = mysqli_prepare($conn, $sqlSala);
+                mysqli_stmt_bind_param($stmtMesas, "s", $nombreSala);
+                mysqli_stmt_execute($stmtMesas);
+                $resultSala = mysqli_stmt_get_result($stmtMesas);
 
-                    if ($resultSala) {
-                        // Variable para almacenar la clase del formulario
-                        $claseFormulario = '';
+                if ($resultSala) {
+                    // Variable para almacenar la clase del formulario
+                    $claseFormulario = '';
 
-                        // Determinar la clase del formulario según el número de mesas
-                        $numMesas = mysqli_num_rows($resultSala);
-                        if ($numMesas == 2) {
-                            $claseFormulario = 'dos-mesas';
-                        } elseif ($numMesas == 4) {
-                            $claseFormulario = 'cuatro-mesas';
-                        } elseif ($numMesas == 6) {
-                            $claseFormulario = 'seis-mesas';
-                        }
-                        echo "<h2 class='migadepan'>Mesas de $nombreSala</h2>";
-                        echo "<form method='post' action='cambiar_estado_mesa.php' class='sala-distribucion $claseFormulario'>";
-                        // echo "<form method='post' action='cambiar_estado_mesa.php' class='sala-distribucion'>";
-                        while ($row = mysqli_fetch_assoc($resultSala)) {
-                            echo "<button type='submit' name='mesa_id' value='" . $row['id_mesa'] . "' ";
-
-                            // Concatenar clases para capacidad
-                            echo "class='mesa-" . $row['capacidad'];
-
-                            // Concatenar clases para capacidad
-
-
-                            // Concatenar clases adicionales para ocupación
-                            if ($row['ocupada']) {
-                                echo "-ocupada";
-                            }
-
-                            echo " mesa-fondo";
-                            echo "'>";
-                            // echo "'>Mesa " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'];
-
-                            echo "</button>";
-                        }
-                        echo "</form>";
-                    } else {
-                        echo "Error en la consulta: " . mysqli_error($conn);
+                    // Determinar la clase del formulario según el número de mesas
+                    $numMesas = mysqli_num_rows($resultSala);
+                    if ($numMesas == 2) {
+                        $claseFormulario = 'dos-mesas';
+                    } elseif ($numMesas == 4) {
+                        $claseFormulario = 'cuatro-mesas';
+                    } elseif ($numMesas == 6) {
+                        $claseFormulario = 'seis-mesas';
                     }
+                    echo "<h2 class='migadepan'>Mesas de $nombreSala</h2>";
+                    echo "<form method='post' action='cambiar_estado_mesa.php' class='sala-distribucion $claseFormulario'>";
+                    // echo "<form method='post' action='cambiar_estado_mesa.php' class='sala-distribucion'>";
+                    while ($row = mysqli_fetch_assoc($resultSala)) {
+                        echo "<button type='submit' name='mesa_id' value='" . $row['id_mesa'] . "' ";
+
+                        // Concatenar clases para capacidad
+                        echo "class='mesa-" . $row['capacidad'];
+
+                        // Concatenar clases para capacidad
 
 
-                    // Confirmar la transacción
-                    mysqli_commit($conn);
+                        // Concatenar clases adicionales para ocupación
+                        if ($row['ocupada']) {
+                            echo "-ocupada";
+                        }
 
-                    // Cerrar la conexión a la base de datos
-                    // mysqli_close($conn);
-                } catch (Exception $e) {
-                    // Deshacemos la actualización en caso de que se genere alguna excepción
-                    mysqli_rollback($conn);
-                    echo "Error: " . $e->getMessage();
+                        echo " mesa-fondo";
+                        echo "'>";
+                        // echo "'>Mesa " . $row['id_mesa'] . " - Capacidad: " . $row['capacidad'];
+
+                        echo "</button>";
+                    }
+                    echo "</form>";
+                } else {
+                    echo "Error en la consulta: " . mysqli_error($conn);
                 }
             }
 
 
-
+            //Dependiendo del input que se presione hará una llamada a la función de mostrar mesas con el valor que se le pasa correspondiente
+            //Si no entra ni en el if ni en los elseif saldrá del bucle
             if (isset($_POST['terraza_1'])) {
                 mostrarMesas('terraza_1', $conn);
             } elseif (isset($_POST['terraza_2'])) {
@@ -383,11 +382,7 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
             } elseif (isset($_POST['sala_privada_4'])) {
                 mostrarMesas('sala_privada_4', $conn);
             } else {
-                // Redirigir o manejar de alguna manera si se accede a esta página de manera incorrecta
-                // header("Location: ./home.php");
-                // header("Location: mostrar_mesas.php");
-
-                // exit();
+                exit();
             }
 
             // Establecer valores predeterminados para los filtros si no están configurados
@@ -405,6 +400,7 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
             <div class="filtros-separaciones">
                 <div class="margen-1">
                     <h2 class="filtro-margin-top">Mesas Disponibles</h2>
+                    <!-- Formulario del filtro de capacidad -->
                     <form action="mostrar_mesas.php" method="post">
                         <select name="capacidadFiltro" class="select-personas">
                             <option disabled selected>Selecciona opción</option>
@@ -418,15 +414,13 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                         </select>
                         <input class="aceptar-select-personas" type="submit" value="Enviar">
                     </form>
+                    <!-- Si detecta la variable de sesión del filtro de capacidad se llamará a la función correspondiente con el valor del select -->
                     <div class="margen-2-primera">
                         <div class="visible" id="capacidadFilter">
                             <?php
 
                             if (isset($_SESSION['capacidadFiltro'])) {
-                                //$capacidadFiltro = $_POST['capacidadFiltro'];
-
                                 echo "<div id='capacidadFilter' class='visible'>";
-
                                 filtrarMesasPorCapacidad($conn, $_SESSION['capacidadFiltro']);
                                 echo "</div>";
                             }
@@ -434,6 +428,7 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                         </div>
                     </div>
                 </div>
+                <!-- Este botón muestra u oculta los resultados del filtro de capacidad cuando pulsas en él -->
                 <button class="botones-ocultar" onclick="toggleFilter('capacidadFilter')">Mostrar/Ocultar Filtro de Capacidad</button>
             </div>
 
@@ -454,13 +449,14 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                                 $_SESSION['fechaFiltro'] = $_POST['fechaFiltro'];
                             }
                         }
-
+                        //Llamamos a la función del filtro de camareros para que se muestre
                         echo "<div id='camareroFilter' class='visible'>";
                         mostrarCamarerosOrdenadosPorMesas($conn);
                         echo "</div>";
                         ?>
                     </div>
                 </div>
+                <!-- Este botón muestra u oculta los resultados del filtro de camareros cuando pulsas en él -->
                 <button class="botones-ocultar" onclick="toggleFilter('camareroFilter')">Mostrar/Ocultar Filtro de Camareros</button>
             </div>
         </div>
@@ -473,24 +469,18 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                         <div class="margen-2-tercera">
                             <?php
                             try {
-                                $sqlHistorial = "SELECT
-            m.id_mesa,
-            s.nombre AS nombre_sala,
-            o.fecha_inicio,
-            o.fecha_fin
-        FROM
-            tbl_ocupacion o
-            JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
-            JOIN tbl_sala s ON m.id_sala = s.id_sala
-        WHERE
-            o.fecha_fin IS NOT NULL
-        ORDER BY
-            o.fecha_inicio";
+                                // Consulta para mostrar todas las ocupaciones con sus detalles
+                                $sqlHistorial = "SELECT m.id_mesa, s.nombre AS nombre_sala, o.fecha_inicio, o.fecha_fin
+                                FROM tbl_ocupacion o
+                                JOIN tbl_mesa m ON o.id_mesa = m.id_mesa
+                                JOIN tbl_sala s ON m.id_sala = s.id_sala
+                                WHERE o.fecha_fin IS NOT NULL
+                                ORDER BY o.fecha_inicio";
 
                                 // Ejecutar la consulta
                                 $resultHistorial =  mysqli_query($conn, $sqlHistorial);
 
-                                // Verificar si se obtuvieron resultados
+                                // Verificar si se obtuvieron resultados de la consulta
                                 if ($resultHistorial->num_rows > 0) {
                                     // Mostrar los resultados
                                     while ($row = $resultHistorial->fetch_assoc()) {
@@ -522,10 +512,8 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                     </form>
                     <div class="margen-2-cuarta">
                         <?php
-
+                        // Si detecta la variable de sesión del filtro de fecha se llamará a la función correspondiente con el valor del input de id fecha
                         if (isset($_SESSION['fechaFiltro'])) {
-                            //$fechaFiltro = $_POST['fechaFiltro'];
-
                             echo "<div id='fechaFilter' class='visible'>";
                             filtrarMesasPorFecha($conn, $_SESSION['fechaFiltro']);
                             echo "</div>";
@@ -534,6 +522,7 @@ function filtrarMesasPorFecha($conn, $fechaFiltro)
                         ?>
                     </div>
                 </div>
+                <!-- Este botón muestra u oculta los resultados del filtro de fecha cuando pulsas en él -->
                 <button class="botones-ocultar" onclick="toggleFilter('fechaFilter')">Mostrar/Ocultar Filtro por Fecha</button><br>
             </div>
         </div>
