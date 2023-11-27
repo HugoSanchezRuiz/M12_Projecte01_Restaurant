@@ -3,10 +3,10 @@ session_start();
 include_once("./inc/conexion.php");
 
 // Comprobar si el usuario ha iniciado sesión
-if (!isset($_SESSION['usuario'])) {
-    header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
-    exit();
-}
+// if (!isset($_SESSION['usuario'])) {
+//     header('Location: ./formulario.php'); // Redirige a la página de inicio de sesión
+//     exit();
+// }
 ?>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -87,20 +87,29 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
 {
     try {
         // Consulta SQL para mostrar los camareros ordenados por la cantidad de mesas que han ocupado
-        $sqlCamareros = "SELECT
+        $sqlCamareros = "
+    SELECT
         c.nombre as nombre_camarero,
         COUNT(o.id_mesa) as num_mesas_ocupadas,
         GROUP_CONCAT(o.id_mesa ORDER BY o.id_mesa) as mesas_ocupadas_ids,
         GROUP_CONCAT(o.num_veces_ocupada ORDER BY o.id_mesa) as veces_ocupada,
-        GROUP_CONCAT(DISTINCT o.fecha_inicio ORDER BY o.id_mesa) as fechas_inicio
+        GROUP_CONCAT(o.id_ocupacion ORDER BY o.fecha_inicio) as ocupacion_ids,
+        GROUP_CONCAT(DISTINCT o.fecha_inicio ORDER BY o.fecha_inicio) as fechas_inicio
     FROM tbl_camarero c
     LEFT JOIN (
-        SELECT id_camarero, id_mesa, COUNT(*) as num_veces_ocupada, fecha_inicio as fecha_inicio
+        SELECT
+            o.id_camarero,
+            o.id_mesa,
+            COUNT(*) as num_veces_ocupada,
+            GROUP_CONCAT(o.id_ocupacion) as id_ocupacion,
+            GROUP_CONCAT(o.fecha_inicio ORDER BY o.fecha_inicio) as fecha_inicio
         FROM tbl_ocupacion o
-        GROUP BY id_camarero, id_mesa
+        GROUP BY o.id_camarero, o.id_mesa
     ) o ON c.id_camarero = o.id_camarero
     GROUP BY c.id_camarero
-    ORDER BY num_mesas_ocupadas DESC;";
+    ORDER BY num_mesas_ocupadas DESC;
+";
+
 
         $stmtCamareros = mysqli_prepare($conn, $sqlCamareros);
         mysqli_stmt_execute($stmtCamareros);
@@ -110,33 +119,47 @@ function mostrarCamarerosOrdenadosPorMesas($conn)
             die("Error en la consulta: " . mysqli_error($conn));
         }
 
-        if ($resultCamareros->num_rows > 0) {
+        if (mysqli_num_rows($resultCamareros) > 0) {
+            echo "<h2>Camareros (Ordenados por la cantidad de mesas ocupadas)</h2>";
             while ($row = mysqli_fetch_assoc($resultCamareros)) {
-                echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
-                echo "<p>Mesas Ocupadas:</p>";
-
-                $mesasIds = explode(",", $row['mesas_ocupadas_ids']);
-                $vecesOcupada = explode(",", $row['veces_ocupada']);
-                $fechasInicio = explode(",", $row['fechas_inicio']);
-
-                for ($i = 0; $i < count($mesasIds); $i++) {
-                    echo "Mesa ID: " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i];
-
-                    // Si la mesa se ha ocupado más de una vez, mostrar las fechas correspondientes
-                    if ($vecesOcupada[$i] > 1) {
-                        echo "<ul>";
-                        for ($j = 0; $j < $vecesOcupada[$i]; $j++) {
-                            echo "<li>Ocupación " . ($j + 1) . ": " . $fechasInicio[$i] . "</li>";
-                        }
-                        echo "</ul>";
-                    } else {
-                        echo " - Fecha Inicio: " . $fechasInicio[$i];
-                        echo "<br>";
-                    }
-
-                    echo "<br>";
-                }
                 echo "<p>------------------------</p>";
+                echo "<p>Camarero: " . $row['nombre_camarero'] . " - Mesas Ocupadas: " . $row['num_mesas_ocupadas'] . "</p>";
+                
+                if ($row['num_mesas_ocupadas'] > 0) {
+                    echo "<p>Mesas Ocupadas:</p>";
+                    
+                    $mesasIds = explode(",", $row['mesas_ocupadas_ids']);
+                    $vecesOcupada = explode(",", $row['veces_ocupada']);
+                    $fechasInicio = explode(",", $row['fechas_inicio']);
+
+                    $totalVecesOcupadas = 0;
+
+                    for ($i = 0; $i < count($mesasIds); $i++) {
+                        if ($mesasIds[$i] != null && $vecesOcupada[$i] != null) {
+                            echo "Mesa " . $mesasIds[$i] . " - Veces Ocupada: " . $vecesOcupada[$i];
+                            $totalVecesOcupadas += $vecesOcupada[$i];
+                            
+                            // Si la mesa se ha ocupado más de una vez, mostrar las fechas correspondientes
+                            if ($vecesOcupada[$i] > 1) {
+                                echo "<ul>";
+                                for ($j = 0; $j < $vecesOcupada[$i]; $j++) {
+                                    echo "<li>Ocupación " . ($j + 1) . ": " . $fechasInicio[$i * $vecesOcupada[$i] + $j] . "</li>";
+                                }
+                                echo "</ul>";
+                            } else {
+                                if ($fechasInicio[$i] != null) {
+                                    echo " - Fecha Inicio: " . $fechasInicio[$i];
+                                    echo "<br>";
+                                }
+                            }
+                            
+                            echo "<br>";
+                            echo "<br>";
+                        }
+                    }
+                    echo "Total ocupaciones: " . $totalVecesOcupadas;
+                }
+                
             }
         } else {
             echo "<p>No hay resultados.</p>";
