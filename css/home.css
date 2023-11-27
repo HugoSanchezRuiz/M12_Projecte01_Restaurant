@@ -5,15 +5,18 @@
 }
 
 html {
-    overflow-y: hidden;
+    background-color: #0d2b33;
     margin: 0;
     color: white;
     height: 100vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 body {
     margin: 0;
 }
+
 
 /* HEADER */
 
@@ -31,7 +34,9 @@ header {
 }
 
 .secciones {
-    font-size: 2.2vh;
+    border: transparent;
+    background-color: transparent;
+    font-size: 2vh;
     color: #fdf7ec;
     text-align: right;
     text-decoration: none;
@@ -56,8 +61,8 @@ header {
     transition: all 0.2s;
     background-color: transparent;
     border: none;
-    border-radius:10px;
-    outline:none;
+    border-radius: 10px;
+    outline: none;
 }
 
 .secciones-secund:hover {
@@ -66,47 +71,99 @@ header {
     border-bottom-right-radius: 0.5vh;
 }
 
-.seleccionado-ahora {
+
+/* .seleccionado-ahora {
     border-bottom: 4px solid;
     border-bottom-left-radius: 0.5vh;
     border-bottom-right-radius: 0.5vh;
-}
+} */
 
 .hr-header {
     margin: 0 2vh;
     height: 6vh;
     width: 0.3vh;
-    border: none;
+    border: 4px;
     background-color: white;
 }
 
 .mesa-2 {
     background-image: url(../src/MESA-DE-2.png);
+    background-size: cover;
+}
+
+.mesa-2-ocupada {
+    background-image: url(../src/MESA-DE-2-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-3 {
     background-image: url(../src/MESA-DE-3.png);
+    background-size: cover;
+}
+
+.mesa-3-ocupada {
+    background-image: url(../src/MESA-DE-3-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-4 {
     background-image: url(../src/MESA-DE-4.png);
+    background-size: cover;
+}
+
+.mesa-4-ocupada {
+    background-image: url(../src/MESA-DE-4-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-6 {
     background-image: url(../src/MESA-DE-6.png);
+    background-size: cover;
+}
+
+.mesa-6-ocupada {
+    background-image: url(../src/MESA-DE-6-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-8 {
     background-image: url(../src/MESA-DE-8.png);
+    background-size: cover;
+}
+
+.mesa-8-ocupada {
+    background-image: url(../src/MESA-DE-8-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-10 {
     background-image: url(../src/MESA-DE-10.png);
+    background-size: cover;
+}
+
+.mesa-10-ocupada {
+    background-image: url(../src/MESA-DE-10-OCUPADA.png);
+    background-size: cover;
 }
 
 .mesa-15 {
     background-image: url(../src/MESA-DE-15.png);
+    background-size: cover;
 }
+
+.mesa-15-ocupada {
+    background-image: url(../src/MESA-DE-15-OCUPADA.png);
+    background-size: cover;
+}
+
+.salas {
+    display: none;
+}
+
+.visible {
+    display: block !important;
+}
+
 
 /* HTML */
 
@@ -115,6 +172,7 @@ header {
 }
 
 #restaurante {
+    border-radius: 3vh 3vh 3vh 0;
     background-image: url(../src/MARMOL.jpg);
     background-size: cover;
     width: 64%;
@@ -128,35 +186,76 @@ header {
     background-color: #0d2b33;
 }
 
-.margen {
-    margin: 0 2vh;
-    height: 40vh;
+.margen-1 {
+    padding: 0.01vh 2vh 0 2vh;
+    height: 38vh;
+}
+
+.margen-2-primera {
+    margin: 0 -1vh 0 0;
+    height: 28vh;
     overflow-y: scroll;
 }
 
-.margen::-webkit-scrollbar {
+.margen-2-segunda {
+    margin: 0 -1vh 0 0;
+    height: 27vh;
+    overflow-y: scroll;
+}
+
+.margen-2-tercera {
+    margin: 0 -1vh 0 0;
+    height: 36vh;
+    overflow-y: scroll;
+}
+
+.margen-2-cuarta {
+    margin: 0 -1vh 0 0;
+    height: 28vh;
+    overflow-y: scroll;
+}
+
+.margen-2-primera::-webkit-scrollbar,
+.margen-2-segunda::-webkit-scrollbar,
+.margen-2-tercera::-webkit-scrollbar,
+.margen-2-cuarta::-webkit-scrollbar {
     -webkit-appearance: none;
 }
 
-.margen::-webkit-scrollbar:vertical {
+.margen-2-primera::-webkit-scrollbar:vertical,
+.margen-2-segunda::-webkit-scrollbar:vertical,
+.margen-2-tercera::-webkit-scrollbar:vertical,
+.margen-2-cuarta::-webkit-scrollbar:vertical {
     width: 10px;
 }
 
-.margen::-webkit-scrollbar-button:increment {
+.margen-2-primera::-webkit-scrollbar-button:increment,
+.margen-2-segunda::-webkit-scrollbar-button:increment,
+.margen-2-tercera::-webkit-scrollbar-button:increment,
+.margen-2-cuarta::-webkit-scrollbar-button:increment {
     display: none;
 }
 
-.margen::-webkit-scrollbar:horizontal {
+.margen-2-primera::-webkit-scrollbar:horizontal,
+.margen-2-segunda::-webkit-scrollbar:horizontal,
+.margen-2-tercera::-webkit-scrollbar:horizontal,
+.margen-2-cuarta::-webkit-scrollbar:horizontal {
     height: 10px;
 }
 
-.margen::-webkit-scrollbar-thumb {
+.margen-2-primera::-webkit-scrollbar-thumb,
+.margen-2-segunda::-webkit-scrollbar-thumb,
+.margen-2-tercera::-webkit-scrollbar-thumb,
+.margen-2-cuarta::-webkit-scrollbar-thumb {
     background-color: #535353;
     border-radius: 20px;
     border: 2px solid #f1f2f3;
 }
 
-.margen::-webkit-scrollbar-track {
+.margen-2-primera::-webkit-scrollbar-track,
+.margen-2-segunda::-webkit-scrollbar-track,
+.margen-2-tercera::-webkit-scrollbar-track,
+.margen-2-cuarta::-webkit-scrollbar-track {
     border-radius: 10px;
 }
 
@@ -188,7 +287,14 @@ header {
     display: block;
 }
 
-/* COLUMNA 1 */
+.migadepan {
+    margin-top: 2vh;
+    text-align: center;
+    color: #0d2b33;
+}
+
+
+/* COLUMNAS */
 
 .select-personas {
     width: 73%;
@@ -208,16 +314,71 @@ header {
     background-color: #535353;
     border-style: solid;
     border-radius: 0.8vh;
+    border-color: white;
     height: 4vh;
     color: white;
     font-size: 1.6vh;
 }
+
+.select-fecha {
+    width: 73%;
+    margin: 0.7vh 0;
+    background-color: #535353;
+    border: none;
+    border-radius: 0.8vh;
+    height: 4vh;
+    color: white;
+    font-size: 1.6vh;
+    padding: 0 0 0 0.5vh;
+}
+
+.select-fecha::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    border-radius: 50%;
+    padding: 4px;
+}
+
+.aceptar-select-fecha {
+    width: 25%;
+    margin: 0.7vh 0;
+    background-color: #535353;
+    border-style: solid;
+    border-radius: 0.8vh;
+    border-color: white;
+    height: 4vh;
+    color: white;
+    font-size: 1.6vh;
+}
+
+.filtros-separaciones {
+    height: 43vh;
+    margin: 1.5vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3vh;
+    /* border: solid 2px #fdf7ec;*/
+}
+
+.botones-ocultar {
+    width: 100%;
+    background-color: #535353;
+    border: none;
+    border-radius: 0 0 3vh 3vh;
+    height: 5vh;
+    color: #fdf7ec;
+    font-size: 1.6vh;
+}
+
+.filtro-margin-top {
+    margin-top: 1.5vh;
+}
+
 
 /* TERRAZAS */
 
 .terraza-mesa {
     height: 45vh;
 }
+
 
 /* COMEDORES */
 
@@ -228,6 +389,7 @@ header {
 .comedor-3-mesa {
     height: 30vh;
 }
+
 
 /* SALAS PRIVADAS */
 
@@ -242,6 +404,7 @@ header {
 .salaprivada-4-mesa {
     height: 45vh;
 }
+
 
 /* ESPECIALES */
 
@@ -277,33 +440,92 @@ header {
     float: left;
 }
 
-.column-5 {
-    width: 20%;
-    float: left;
+
+/* RESPONSIVE 1 */
+
+@media only screen and (max-width: 1575px) {
+    #restaurante {
+        width: 50%;
+    }
+    #filtro {
+        width: 25%;
+    }
+    #historial {
+        width: 25%;
+    }
 }
 
-.column-6 {
-    width: 16.66%;
-    float: left;
+
+/* RESPONSIVE 2 */
+
+@media only screen and (max-width: 1200px) {
+    html {
+        height: fit-content;
+        overflow-y: scroll;
+    }
+    html::-webkit-scrollbar {
+        -webkit-appearance: none;
+    }
+    html::-webkit-scrollbar:vertical {
+        width: 10px;
+    }
+    html::-webkit-scrollbar-button:increment {
+        display: none;
+    }
+    html::-webkit-scrollbar:horizontal {
+        height: 10px;
+    }
+    html::-webkit-scrollbar-thumb {
+        background-color: #535353;
+        border-radius: 20px;
+        border: 2px solid #f1f2f3;
+    }
+    html::-webkit-scrollbar-track {
+        border-radius: 10px;
+    }
+    .flex {
+        display: block;
+    }
+    #restaurante {
+        border-radius: 3vh;
+        width: 95%;
+        margin: 3vh;
+    }
+    #filtro {
+        height: fit-content;
+        display: flex;
+        width: 100%;
+    }
+    #historial {
+        height: fit-content;
+        display: flex;
+        width: 100%;
+    }
+    .filtros-separaciones {
+        width: 100%;
+    }
 }
 
-.column-75 {
-    width: 75%;
-    float: left;
-}
 
-/* RESPONSIVE */
+/* RESPONSIVE 3 */
 
 @media only screen and (max-width: 600px) {
-    .column-2 {
-        width: 50%;
+    #restaurante {
+        border-radius: 3vh;
+        width: 90%;
+        margin: 3vh;
     }
-
-    .column-3 {
-        width: 50%;
+    #filtro {
+        height: fit-content;
+        display: block;
+        width: 94%;
     }
-
-    .column-4 {
-        width: 50%;
+    #historial {
+        height: fit-content;
+        display: block;
+        width: 94%;
+    }
+    .filtros-separaciones {
+        width: 100%;
     }
 }
