@@ -79,6 +79,7 @@ header {
 } */
 
 .hr-header {
+    border-radius: 100%;
     margin: 0 2vh;
     height: 6vh;
     width: 0.3vh;
@@ -86,74 +87,75 @@ header {
     background-color: white;
 }
 
+.extras {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 1vh !important;
+    padding: 1vh 2vh 1vh 2vh;
+}
+
+.responsive-header {
+    background-color: #0d2b33;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+}
+
+/* MESAS */
+
 .mesa-2 {
     background-image: url(../src/MESA-DE-2.png);
-    background-size: cover;
 }
 
 .mesa-2-ocupada {
     background-image: url(../src/MESA-DE-2-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-3 {
     background-image: url(../src/MESA-DE-3.png);
-    background-size: cover;
 }
 
 .mesa-3-ocupada {
     background-image: url(../src/MESA-DE-3-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-4 {
     background-image: url(../src/MESA-DE-4.png);
-    background-size: cover;
 }
 
 .mesa-4-ocupada {
     background-image: url(../src/MESA-DE-4-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-6 {
     background-image: url(../src/MESA-DE-6.png);
-    background-size: cover;
 }
 
 .mesa-6-ocupada {
     background-image: url(../src/MESA-DE-6-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-8 {
     background-image: url(../src/MESA-DE-8.png);
-    background-size: cover;
 }
 
 .mesa-8-ocupada {
     background-image: url(../src/MESA-DE-8-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-10 {
     background-image: url(../src/MESA-DE-10.png);
-    background-size: cover;
 }
 
 .mesa-10-ocupada {
     background-image: url(../src/MESA-DE-10-OCUPADA.png);
-    background-size: cover;
 }
 
 .mesa-15 {
     background-image: url(../src/MESA-DE-15.png);
-    background-size: cover;
 }
 
 .mesa-15-ocupada {
     background-image: url(../src/MESA-DE-15-OCUPADA.png);
-    background-size: cover;
 }
 
 .salas {
@@ -288,9 +290,41 @@ header {
 }
 
 .migadepan {
-    margin-top: 2vh;
+    padding-top: 2vh;
     text-align: center;
     color: #0d2b33;
+}
+
+.sala-distribucion {
+    height: min-content;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.mesa-fondo {
+    height: 400px;
+    width: 100%;
+    /* background-image: url(./img/MESA-DE-2-OCUPADA.png); */
+    background-size: contain;
+    background-repeat: no-repeat;
+    aspect-ratio: 1;
+    background-color: transparent;
+    border: transparent;
+}
+
+.dos-mesas {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.cuatro-mesas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.seis-mesas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 
@@ -447,11 +481,18 @@ header {
     #restaurante {
         width: 50%;
     }
+
     #filtro {
         width: 25%;
     }
+
     #historial {
         width: 25%;
+    }
+
+    .mesa-fondo {
+        height: min-content;
+        width: 100%;
     }
 }
 
@@ -463,46 +504,82 @@ header {
         height: fit-content;
         overflow-y: scroll;
     }
+
     html::-webkit-scrollbar {
         -webkit-appearance: none;
     }
+
     html::-webkit-scrollbar:vertical {
         width: 10px;
     }
+
     html::-webkit-scrollbar-button:increment {
         display: none;
     }
+
     html::-webkit-scrollbar:horizontal {
         height: 10px;
     }
+
     html::-webkit-scrollbar-thumb {
         background-color: #535353;
         border-radius: 20px;
         border: 2px solid #f1f2f3;
     }
+
     html::-webkit-scrollbar-track {
         border-radius: 10px;
     }
+
     .flex {
         display: block;
     }
+
     #restaurante {
+        height: fit-content;
         border-radius: 3vh;
-        width: 95%;
+        width: 94%;
         margin: 3vh;
     }
+
     #filtro {
         height: fit-content;
         display: flex;
         width: 100%;
     }
+
     #historial {
         height: fit-content;
         display: flex;
         width: 100%;
     }
+
     .filtros-separaciones {
         width: 100%;
+        color: #3a5f68;
+    }
+
+    /* HEADER */
+    header {
+        height: 18vh;
+        margin-bottom: -2vh;
+    }
+
+    .responsive-header {
+        display: block;
+        align-items: center;
+    }
+
+    .hr-header {
+        height: 9vh;
+    }
+
+    .extras {
+        font-size: 1.8vh;
+        text-align: center;
+        padding: 0 1vh;
+        margin: 0 1.5vh 0 0.5vh;
+        width: fit-content;
     }
 }
 
@@ -511,21 +588,32 @@ header {
 
 @media only screen and (max-width: 600px) {
     #restaurante {
+        height: fit-content;
         border-radius: 3vh;
-        width: 90%;
         margin: 3vh;
     }
+
     #filtro {
         height: fit-content;
         display: block;
         width: 94%;
     }
+
     #historial {
         height: fit-content;
         display: block;
         width: 94%;
     }
+
     .filtros-separaciones {
         width: 100%;
+    }
+
+    .mesa-fondo {
+        height: 100%;
+    }
+
+    header {
+        height: 18vh;
     }
 }
