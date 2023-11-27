@@ -3,19 +3,24 @@ session_start();
 
 include_once("./conexion.php");
 
+// comprobamos que el id_mesa no esta vacio
 if (isset($_POST['mesa_id'])) {
     $mesa_id = $_POST['mesa_id'];
 
     try {
-        // Inicia la transacción
+        // desactivamos la funcion de que las sentencias sql se ejecuten de manera independiente
         mysqli_autocommit($conn, false);
+        // solo si todas las sentencias son correctas se ejecutarán, si alguna falla no.
         mysqli_begin_transaction($conn);
 
-        // Consulta SQL para obtener el estado actual de ocupación de la mesa
+        //definimos la primera consulta
         $sqlEstadoActual = "SELECT ocupada FROM tbl_mesa WHERE id_mesa = $mesa_id";
+        // ejecutamos la consulta
         $resultEstadoActual = mysqli_query($conn, $sqlEstadoActual);
 
+        // si se ha ejecutado la otra consulta entramos en el if
         if ($resultEstadoActual) {
+            // ejecutamos la consulta
             $row = mysqli_fetch_assoc($resultEstadoActual);
             $ocupada = $row['ocupada'];
 
@@ -24,6 +29,7 @@ if (isset($_POST['mesa_id'])) {
 
             // Actualiza el estado de ocupación en la base de datos
             $sqlActualizarEstado = "UPDATE tbl_mesa SET ocupada = '$nuevoEstado' WHERE id_mesa = $mesa_id";
+            // ejecutamos la consulta
             $resultActualizarEstado = mysqli_query($conn, $sqlActualizarEstado);
 
             if ($resultActualizarEstado) {
@@ -42,6 +48,7 @@ if (isset($_POST['mesa_id'])) {
                 } else {
                     // Si la mesa está desocupada, actualiza la fecha_fin en tbl_ocupacion
                     $sqlActualizarOcupacion = "UPDATE tbl_ocupacion SET fecha_fin = NOW() WHERE id_mesa = $mesa_id AND fecha_fin IS NULL";
+                    // ejecutamos la consulta
                     $resultActualizarOcupacion = mysqli_query($conn, $sqlActualizarOcupacion);
 
                     if (!$resultActualizarOcupacion) {
@@ -67,7 +74,8 @@ if (isset($_POST['mesa_id'])) {
         mysqli_close($conn);
 
         // Redirige de nuevo a la página anterior
-        header("Location: ./home.php");
+        // echo "bien";
+        header("Location: ./mostrar_mesas.php");
         exit();
     } catch (Exception $e) {
         // Si hay alguna excepción, realiza un rollback
@@ -76,7 +84,6 @@ if (isset($_POST['mesa_id'])) {
     }
 } else {
     // Si se intenta acceder a este archivo de manera incorrecta, redirige a la página principal
-    // header("Location: ./home.php");
     echo "cambio no realizado";
     exit();
 }
